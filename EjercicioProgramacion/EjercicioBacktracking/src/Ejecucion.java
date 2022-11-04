@@ -27,7 +27,7 @@ public class Ejecucion {
         recorrerAdyacentes(tablero, 1, 1);
     }
 
-    public static int[][] añadirValores(int[][] tablero, int x, int y){
+    public static int[][] añadirValores(int[][] tablero, int x, int y) {
         Random r = new Random();
         int numero;
         for (int i = 0; i < y; i++) {
@@ -38,7 +38,6 @@ public class Ejecucion {
         }
         return tablero;
     }
-    int[]
     public static void recorrerAdyacentes(int[][] tablero, int x, int y) {
         int valory = y;
         int valorx = x;
