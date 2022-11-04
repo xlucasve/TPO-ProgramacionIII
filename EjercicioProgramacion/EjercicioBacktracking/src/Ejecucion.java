@@ -24,7 +24,7 @@ public class Ejecucion {
             }
             System.out.println("");
         }
-        //mostrarAdyacentes(tablero, 2, 3);
+        recorrerAdyacentes(tablero, 1, 1);
     }
 
     public static int[][] añadirValores(int[][] tablero, int x, int y){
@@ -38,16 +38,20 @@ public class Ejecucion {
         }
         return tablero;
     }
-
-    public static void mostrarAdyacentes(int[][] tablero, int x, int y){
+    int[]
+    public static void recorrerAdyacentes(int[][] tablero, int x, int y) {
+        int valory = y;
+        int valorx = x;
         try {
-            for (int i = y-1; i < y++; i++) {
-                for (int j = x-1; j < x; j++) {
-                    System.out.println(tablero[i][j]);
+            for (int i = valory - 1; i < valory+2; i++) {
+                for (int j = valorx-1; j < valorx+2; j++) {
+                    System.out.println("Y" + i + " X" + j);
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException e){
+        } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Fuera de limite");
         }
     }
+
+    //public static boolean posicionValida
 }
