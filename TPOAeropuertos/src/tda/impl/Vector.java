@@ -72,4 +72,13 @@ public class Vector<E> implements VectorTDA<E> {
     public int hashCode() {
         return Objects.hash(vector);
     }
+
+    public boolean estaVacio() {
+        try {
+            this.recuperarElemento(1);
+            return false;
+        } catch (IndexOutOfBoundsException e) {
+            return true;
+        }
+    }
 }

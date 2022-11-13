@@ -4,6 +4,7 @@ import Modelo.Vuelo;
 import tda.ConjuntoTDA;
 import tda.VectorTDA;
 import tda.impl.Conjunto;
+import tda.impl.Vector;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -13,6 +14,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 public class Main {
     public static void main(String[] args) throws IOException, ParseException {
@@ -20,6 +22,9 @@ public class Main {
         String datosVuelos = "src/Recursos/Vuelos.csv";
         String datosTripulaciones = "src/Recursos/Tripulaciones.csv";
         ConjuntoTDA<Vuelo> conjuntoVuelos = leerDatosVuelos(datosVuelos, "");
+
+
+
         /*VectorTDA<Vuelo> listadoVuelos = conjuntoVuelos.aVector();
         for (int i = 0; i < conjuntoVuelos.capacidad(); i++){
             System.out.print(listadoVuelos.recuperarElemento(i).getNroVuelo()+" ");
@@ -28,12 +33,25 @@ public class Main {
             System.out.print(listadoVuelos.recuperarElemento(i).getFechaDespegue()+" ");
             System.out.print(listadoVuelos.recuperarElemento(i).getFechaAterrizaje()+" ");
             System.out.println();DECOMENTAR SI*/
+        VectorTDA<Vuelo> vuelosAdyacentes = new Vector<>();
+        vuelosAdyacentes.inicializarVector(12);
+        Vuelo pruebaAdyacente = conjuntoVuelos.elegir();
+        System.out.println("ELEMENTO A PROBAR EN ADYACENTES = " + pruebaAdyacente.getNroVuelo() + " " + pruebaAdyacente.getAeropuertoDestino() + " " + pruebaAdyacente.getFechaAterrizaje());
+        vuelosAdyacentes = obtenerAdyacentes(pruebaAdyacente, conjuntoVuelos);
+        System.out.println("Hay adyacentes? = " + !vuelosAdyacentes.estaVacio());
+        System.out.println();
+        if (!vuelosAdyacentes.estaVacio()){
+                for (int i = 0; i < vuelosAdyacentes.capacidadVector(); i++) {
+                System.out.println(vuelosAdyacentes.recuperarElemento(i).getNroVuelo() + " " + vuelosAdyacentes.recuperarElemento(i).getAeropuertoOrigen() + " " + vuelosAdyacentes.recuperarElemento(i).getFechaDespegue());
+            }
+        }
     }
 
     public static ConjuntoTDA<Vuelo> leerDatosVuelos(String caminoDatos, String linea) throws IOException, ParseException {
         BufferedReader lector = new BufferedReader(new FileReader(caminoDatos));
         ConjuntoTDA<Vuelo> conjunto = new Conjunto<>();
         conjunto.inicializarConjunto();
+        //Para no considerar la primera linea que tiene los titulos nomas
         boolean primeraLinea = true;
         while ((linea = lector.readLine()) != null){
             if (primeraLinea){
@@ -63,6 +81,27 @@ public class Main {
         return conjunto;
     }
 
-    private static void realizarVuelos(ConjuntoTDA<Vuelo> todosVuelos){
+    private static VectorTDA<Vuelo> obtenerAdyacentes(Vuelo origen, ConjuntoTDA<Vuelo> todosVuelos){
+        VectorTDA<Vuelo> vectorVuelos = new Vector<>();
+        vectorVuelos.inicializarVector(todosVuelos.capacidad());
+        VectorTDA<Vuelo> vuelosAdyacentes = new Vector<>();
+        vuelosAdyacentes.inicializarVector(4);
+        vectorVuelos = todosVuelos.aVector();
+        //j = Tengo que darle una posición al elemento en el vector
+        int j = 0;
+        for (int i = 0; i < vectorVuelos.capacidadVector(); i++){
+            Vuelo v = vectorVuelos.recuperarElemento(i);
+            //Si el origen del vuelo es el mismo que el a donde me llevo el vuelo en el que estoy
+            if (Objects.equals(vectorVuelos.recuperarElemento(i).getAeropuertoOrigen(), origen.getAeropuertoDestino())){
+                if(vectorVuelos.recuperarElemento(i).getFechaDespegue().compareTo(origen.getFechaAterrizaje()) > 0) {
+                    //Si la hora del vuelo que estoy probando es después de haber llegado
+                    //Compare to: Devuelve 1 si es mayor el horario. Si es 1 entonces ese vuelo seria "adyacente"
+                    vuelosAdyacentes.agregarElemento(j, vectorVuelos.recuperarElemento(i));
+                    j++;
+                }
+
+            }
+        }
+        return vuelosAdyacentes;
     }
 }

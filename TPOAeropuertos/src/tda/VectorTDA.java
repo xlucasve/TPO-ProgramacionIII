@@ -14,4 +14,6 @@ public interface VectorTDA<E> {
     boolean contieneElemento(E elemento);
 
     VectorTDA<E> copiar();
+
+    boolean estaVacio();
 }
