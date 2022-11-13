@@ -32,17 +32,19 @@ public class Main {
             System.out.print(listadoVuelos.recuperarElemento(i).getAeropuertoDestino()+" ");
             System.out.print(listadoVuelos.recuperarElemento(i).getFechaDespegue()+" ");
             System.out.print(listadoVuelos.recuperarElemento(i).getFechaAterrizaje()+" ");
-            System.out.println();DECOMENTAR SI*/
+            System.out.println();DECOMENTAR Para probar que se devuelven bien los elementos*/
         VectorTDA<Vuelo> vuelosAdyacentes = new Vector<>();
         vuelosAdyacentes.inicializarVector(12);
         Vuelo pruebaAdyacente = conjuntoVuelos.elegir();
+        //Por ahora el algoritmo funciona tomando el destino del vuelo que elejí, debería elegir el aeropuerto en el que estoy ubicado ahora mismo en vez
+        //En el algoritmo voy a mandar en el parametro el vuelo a realizar en los llamados recursivos, para asi agregarlo a la lista de vuelos realizados y tambien mandarlo a este algoritmo de adyacentes
         System.out.println("ELEMENTO A PROBAR EN ADYACENTES = " + pruebaAdyacente.getNroVuelo() + " " + pruebaAdyacente.getAeropuertoDestino() + " " + pruebaAdyacente.getFechaAterrizaje());
         vuelosAdyacentes = obtenerAdyacentes(pruebaAdyacente, conjuntoVuelos);
         System.out.println("Hay adyacentes? = " + !vuelosAdyacentes.estaVacio());
         System.out.println();
         if (!vuelosAdyacentes.estaVacio()){
                 for (int i = 0; i < vuelosAdyacentes.capacidadVector(); i++) {
-                System.out.println(vuelosAdyacentes.recuperarElemento(i).getNroVuelo() + " " + vuelosAdyacentes.recuperarElemento(i).getAeropuertoOrigen() + " " + vuelosAdyacentes.recuperarElemento(i).getFechaDespegue());
+                System.out.println(vuelosAdyacentes.recuperarElemento(i).getNroVuelo() + " | ORIGEN: " + vuelosAdyacentes.recuperarElemento(i).getAeropuertoOrigen() + " | DESTINO: " + vuelosAdyacentes.recuperarElemento(i).getAeropuertoDestino() + " | DESPUEGE: " + vuelosAdyacentes.recuperarElemento(i).getFechaDespegue());
             }
         }
     }
