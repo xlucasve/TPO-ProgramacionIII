@@ -1,6 +1,7 @@
 package Modelo;
 
 import tda.VectorTDA;
+import tda.impl.Vector;
 
 public class Tripulacion {
 
@@ -18,7 +19,7 @@ public class Tripulacion {
         this.camino = camino;
     }
 
-    public int longitudCamino(){
+    public int cantidadElementos(){
         int cont = 0;
         try{
             for (int i = 0; i < this.camino.capacidadVector(); i++) {
@@ -26,7 +27,7 @@ public class Tripulacion {
                 cont++;
             }
         } catch (NullPointerException ignored){
-            //Dejo recorrer toda la lista por si hay algún elemento suelto
+            //Dejo al algoritmo recorrer toda la lista por si hay algún elemento suelto
         }
         return cont;
     }

@@ -59,6 +59,33 @@ public class Main {
 
         //Prueba de vector.cantidadElementos - FUNCIONA 14/11/22
         //System.out.println(vuelosAdyacentes.cantidadElementos());
+
+        VectorTDA<Vuelo> vectorVacio = new Vector<>();
+        vectorVacio.inicializarVector(conjuntoVuelos.capacidad());
+
+        Tripulacion prueba = new Tripulacion(vectorVacio);
+        prueba.setCamino(conjuntoVuelos.aVector());
+
+        Date temp = new SimpleDateFormat("yyyy-MM-dd HH:mm")
+                .parse("0000-00-00 00:00");
+        System.out.println(temp);
+
+        ConjuntoTDA<Vuelo> conjuntoVacio = new Conjunto<>();
+        conjuntoVacio.inicializarConjunto();
+
+        VectorTDA<Vuelo> camino = new Vector<>();
+        camino.inicializarVector(12);
+
+
+        Tripulacion tripulacion = new Tripulacion(vectorVacio);
+        Vuelo primero = new Vuelo("1", "AEROPARQUE", "AEROPARQUE", temp, temp);
+        tripulacion = realizarVuelos(conjuntoVacio, tripulacion, camino, 0, primero, conjuntoVuelos);
+
+        for (int i = 0; i < tripulacion.cantidadElementos(); i++) {
+            System.out.println(tripulacion.getCamino().recuperarElemento(i).getNroVuelo());
+            System.out.println(tripulacion.getCamino().recuperarElemento(i).getAeropuertoOrigen());
+
+        }
     }
 
     public static ConjuntoTDA<Vuelo> leerDatosVuelos(String caminoDatos, String linea) throws IOException, ParseException {
@@ -113,6 +140,7 @@ public class Main {
                 if(vectorVuelos.recuperarElemento(i).getFechaDespegue().compareTo(origen.getFechaAterrizaje()) > 0) {
                     //Si la hora del vuelo que estoy probando es después de haber llegado
                     //Compare to: Devuelve 1 si es mayor el horario. Si es 1 entonces ese vuelo seria "adyacente"
+                    System.out.println("AGREGANDO: " + vectorVuelos.recuperarElemento(i).getNroVuelo());
                     vuelosAdyacentes.agregarElemento(j, vectorVuelos.recuperarElemento(i));
                     j++;
                 }
@@ -121,13 +149,24 @@ public class Main {
         return vuelosAdyacentes;
     }
 
-    public static VectorTDA<Tripulacion> nombreAlgoritmo(VectorTDA<Tripulacion> todasTripulaciones, ConjuntoTDA<Vuelo> vuelosHechos, int tripulacion, VectorTDA<Vuelo> caminoActual, int etapa, Vuelo vueloActual){
+    public static Tripulacion realizarVuelos(ConjuntoTDA<Vuelo> vuelosHechos, Tripulacion tripulacion, VectorTDA<Vuelo> caminoActual, int etapa, Vuelo vueloActual, ConjuntoTDA<Vuelo> todosVuelos){
         //Agregar el vuelo que acabo de agregar al camino actual
         caminoActual.agregarElemento(etapa, vueloActual);
         //V1.4 Centrarme en conseguir camino largo
-        if (caminoActual.cantidadElementos() > todasTripulaciones.recuperarElemento(tripulacion).longitudCamino()){
-            todasTripulaciones.recuperarElemento(tripulacion).setCamino(caminoActual);
+        if (caminoActual.cantidadElementos() > tripulacion.cantidadElementos()-1){
+            tripulacion.setCamino(caminoActual);
         }
-        return todasTripulaciones;
+
+        VectorTDA<Vuelo> adyacentes = new Vector<>();
+        adyacentes.inicializarVector(4);
+        adyacentes = obtenerAdyacentes(vueloActual, todosVuelos);
+        int cant = adyacentes.cantidadElementos();
+
+        for (int i = 0; i < cant; i++) {
+            vuelosHechos.agregar(vueloActual);
+            realizarVuelos(vuelosHechos,tripulacion,caminoActual,etapa+1,adyacentes.recuperarElemento(i),todosVuelos);
+            vuelosHechos.sacar(vueloActual);
+        }
+        return tripulacion;
     }
 }
