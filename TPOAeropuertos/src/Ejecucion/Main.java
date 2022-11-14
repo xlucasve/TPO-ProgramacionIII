@@ -1,5 +1,6 @@
 package Ejecucion;
 
+import Modelo.Tripulacion;
 import Modelo.Vuelo;
 import tda.ConjuntoTDA;
 import tda.VectorTDA;
@@ -32,12 +33,20 @@ public class Main {
             System.out.print(listadoVuelos.recuperarElemento(i).getAeropuertoDestino()+" ");
             System.out.print(listadoVuelos.recuperarElemento(i).getFechaDespegue()+" ");
             System.out.print(listadoVuelos.recuperarElemento(i).getFechaAterrizaje()+" ");
-            System.out.println();DECOMENTAR Para probar que se devuelven bien los elementos*/
-        VectorTDA<Vuelo> vuelosAdyacentes = new Vector<>();
-        vuelosAdyacentes.inicializarVector(12);
-        Vuelo pruebaAdyacente = conjuntoVuelos.elegir();
-        //Por ahora el algoritmo funciona tomando el destino del vuelo que elejí, debería elegir el aeropuerto en el que estoy ubicado ahora mismo en vez
+            System.out.println();*/
+        //DECOMENTAR Para probar que se devuelven bien los elementos
+
+
+
+
+
+        //Por ahora el algoritmo funciona tomando el destino del vuelo que elegí
         //En el algoritmo voy a mandar en el parametro el vuelo a realizar en los llamados recursivos, para asi agregarlo a la lista de vuelos realizados y tambien mandarlo a este algoritmo de adyacentes
+
+        //Prueba de si obtiene los adyacentes correctamente - FUNCIONA 14/11/22
+        /*VectorTDA<Vuelo> vuelosAdyacentes = new Vector<>();
+        vuelosAdyacentes.inicializarVector(conjuntoVuelos.capacidad());
+        Vuelo pruebaAdyacente = conjuntoVuelos.elegir();
         System.out.println("ELEMENTO A PROBAR EN ADYACENTES = " + pruebaAdyacente.getNroVuelo() + " " + pruebaAdyacente.getAeropuertoDestino() + " " + pruebaAdyacente.getFechaAterrizaje());
         vuelosAdyacentes = obtenerAdyacentes(pruebaAdyacente, conjuntoVuelos);
         System.out.println("Hay adyacentes? = " + !vuelosAdyacentes.estaVacio());
@@ -46,13 +55,19 @@ public class Main {
                 for (int i = 0; i < vuelosAdyacentes.capacidadVector(); i++) {
                 System.out.println(vuelosAdyacentes.recuperarElemento(i).getNroVuelo() + " | ORIGEN: " + vuelosAdyacentes.recuperarElemento(i).getAeropuertoOrigen() + " | DESTINO: " + vuelosAdyacentes.recuperarElemento(i).getAeropuertoDestino() + " | DESPUEGE: " + vuelosAdyacentes.recuperarElemento(i).getFechaDespegue());
             }
-        }
+        }*/
+
+        //Prueba de vector.cantidadElementos - FUNCIONA 14/11/22
+        //System.out.println(vuelosAdyacentes.cantidadElementos());
     }
 
     public static ConjuntoTDA<Vuelo> leerDatosVuelos(String caminoDatos, String linea) throws IOException, ParseException {
+
+        //Creacion de objectos necesarias
         BufferedReader lector = new BufferedReader(new FileReader(caminoDatos));
         ConjuntoTDA<Vuelo> conjunto = new Conjunto<>();
         conjunto.inicializarConjunto();
+
         //Para no considerar la primera linea que tiene los titulos nomas
         boolean primeraLinea = true;
         while ((linea = lector.readLine()) != null){
@@ -77,13 +92,13 @@ public class Main {
                 System.out.println(vuelo.getAeropuertoOrigen());
                 System.out.println(vuelo.getAeropuertoDestino());
                 System.out.println(vuelo.getFechaDespegue());
-                System.out.println(vuelo.getFechaAterrizaje());*DECOMENTAR PARA PROBAR SI FUNCIONA*/
+                System.out.println(vuelo.getFechaAterrizaje());*/ //DECOMENTAR PARA PROBAR SI FUNCIONA
             }
         }
         return conjunto;
     }
 
-    private static VectorTDA<Vuelo> obtenerAdyacentes(Vuelo origen, ConjuntoTDA<Vuelo> todosVuelos){
+    public static VectorTDA<Vuelo> obtenerAdyacentes(Vuelo origen, ConjuntoTDA<Vuelo> todosVuelos){
         VectorTDA<Vuelo> vectorVuelos = new Vector<>();
         vectorVuelos.inicializarVector(todosVuelos.capacidad());
         VectorTDA<Vuelo> vuelosAdyacentes = new Vector<>();
@@ -101,9 +116,18 @@ public class Main {
                     vuelosAdyacentes.agregarElemento(j, vectorVuelos.recuperarElemento(i));
                     j++;
                 }
-
             }
         }
         return vuelosAdyacentes;
+    }
+
+    public static VectorTDA<Tripulacion> nombreAlgoritmo(VectorTDA<Tripulacion> todasTripulaciones, ConjuntoTDA<Vuelo> vuelosHechos, int tripulacion, VectorTDA<Vuelo> caminoActual, int etapa, Vuelo vueloActual){
+        //Agregar el vuelo que acabo de agregar al camino actual
+        caminoActual.agregarElemento(etapa, vueloActual);
+        //V1.4 Centrarme en conseguir camino largo
+        if (caminoActual.cantidadElementos() > todasTripulaciones.recuperarElemento(tripulacion).longitudCamino()){
+            todasTripulaciones.recuperarElemento(tripulacion).setCamino(caminoActual);
+        }
+        return todasTripulaciones;
     }
 }

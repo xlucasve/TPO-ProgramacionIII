@@ -16,4 +16,6 @@ public interface VectorTDA<E> {
     VectorTDA<E> copiar();
 
     boolean estaVacio();
+
+    int cantidadElementos();
 }

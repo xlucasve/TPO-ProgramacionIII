@@ -1,5 +1,6 @@
 package tda.impl;
 
+import Modelo.Vuelo;
 import tda.VectorTDA;
 
 import java.util.ArrayList;
@@ -75,10 +76,22 @@ public class Vector<E> implements VectorTDA<E> {
 
     public boolean estaVacio() {
         try {
-            this.recuperarElemento(1);
+            this.recuperarElemento(0);
             return false;
         } catch (IndexOutOfBoundsException e) {
             return true;
         }
+    }
+    public int cantidadElementos(){
+        int cont = 0;
+        try{
+            for (int i = 0; i < this.capacidadVector(); i++) {
+                this.recuperarElemento(i);
+                cont++;
+            }
+        } catch (NullPointerException ignored){
+            //Dejo recorrer toda la lista por si hay algún elemento suelto
+        }
+        return cont;
     }
 }
