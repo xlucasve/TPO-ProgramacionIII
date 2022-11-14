@@ -140,7 +140,6 @@ public class Main {
                 if(vectorVuelos.recuperarElemento(i).getFechaDespegue().compareTo(origen.getFechaAterrizaje()) > 0) {
                     //Si la hora del vuelo que estoy probando es después de haber llegado
                     //Compare to: Devuelve 1 si es mayor el horario. Si es 1 entonces ese vuelo seria "adyacente"
-                    System.out.println("AGREGANDO: " + vectorVuelos.recuperarElemento(i).getNroVuelo());
                     vuelosAdyacentes.agregarElemento(j, vectorVuelos.recuperarElemento(i));
                     j++;
                 }
@@ -155,17 +154,24 @@ public class Main {
         //V1.4 Centrarme en conseguir camino largo
         if (caminoActual.cantidadElementos() > tripulacion.cantidadElementos()-1){
             tripulacion.setCamino(caminoActual);
+            for (int k = 0;  k < tripulacion.cantidadElementos(); k++) {
+                System.out.println("Actualizado de Resultado: " + tripulacion.getCamino().recuperarElemento(k).getNroVuelo());
+            }
         }
 
         VectorTDA<Vuelo> adyacentes = new Vector<>();
         adyacentes.inicializarVector(4);
         adyacentes = obtenerAdyacentes(vueloActual, todosVuelos);
-        int cant = adyacentes.cantidadElementos();
 
-        for (int i = 0; i < cant; i++) {
-            vuelosHechos.agregar(vueloActual);
-            realizarVuelos(vuelosHechos,tripulacion,caminoActual,etapa+1,adyacentes.recuperarElemento(i),todosVuelos);
-            vuelosHechos.sacar(vueloActual);
+        for (int i = 0; i < adyacentes.cantidadElementos(); i++) {
+            Vuelo vueloSiguiente = adyacentes.recuperarElemento(i);
+            if (!vuelosHechos.pertenece(vueloSiguiente)) {
+                System.out.println("Agregado: " + vueloSiguiente.getNroVuelo());
+                vuelosHechos.agregar(vueloSiguiente);
+                tripulacion = realizarVuelos(vuelosHechos, tripulacion, caminoActual, etapa + 1, vueloSiguiente, todosVuelos);
+                vuelosHechos.sacar(vueloSiguiente);
+                System.out.println("Eliminado: " + vueloSiguiente.getNroVuelo());
+            }
         }
         return tripulacion;
     }
