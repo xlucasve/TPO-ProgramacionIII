@@ -73,6 +73,8 @@ public class Main {
         ConjuntoTDA<Vuelo> conjuntoVacio = new Conjunto<>();
         conjuntoVacio.inicializarConjunto();
 
+        String puntoOrigen = "AEROPARQUE";
+
         VectorTDA<Vuelo> camino = new Vector<>();
         camino.inicializarVector(12);
 
@@ -82,7 +84,7 @@ public class Main {
 
         Tripulacion tripulacion = new Tripulacion(vectorVacio);
         Vuelo primero = new Vuelo("1", "AEROPARQUE", "AEROPARQUE", temp, temp);
-        tripulacion = realizarVuelos(conjuntoVacio, tripulacion, camino, 0, primero, conjuntoVuelos, vuelosPrevios);
+        tripulacion = realizarVuelos(conjuntoVacio, tripulacion, camino, 0, primero, conjuntoVuelos, vuelosPrevios, puntoOrigen);
 
         for (int i = 0; i < tripulacion.cantidadElementos(); i++) {
             System.out.println(tripulacion.getCamino().recuperarElemento(i).getNroVuelo());
@@ -152,14 +154,16 @@ public class Main {
         return vuelosAdyacentes;
     }
 
-    public static Tripulacion realizarVuelos(ConjuntoTDA<Vuelo> vuelosHechos, Tripulacion tripulacion, VectorTDA<Vuelo> caminoActual, int etapa, Vuelo vueloActual, ConjuntoTDA<Vuelo> todosVuelos, ConjuntoTDA<Vuelo> vuelosSolucionPrevia){
+    public static Tripulacion realizarVuelos(ConjuntoTDA<Vuelo> vuelosHechos, Tripulacion tripulacion, VectorTDA<Vuelo> caminoActual, int etapa, Vuelo vueloActual, ConjuntoTDA<Vuelo> todosVuelos, ConjuntoTDA<Vuelo> vuelosSolucionPrevia, String puntoOrigen){
         //Agregar el vuelo que acabo de agregar al camino actual
         caminoActual.agregarElemento(etapa, vueloActual);
-        //V1.4 Centrarme en conseguir camino largo
+        //Centrarme en conseguir camino más largo
         if (caminoActual.cantidadElementos() > tripulacion.cantidadElementos()){
-            if(Objects.equals(caminoActual.obtenerUltimoVuelo().getAeropuertoDestino(), "AEROPARQUE")){
+            //Check de que haya vuelto al punto de origen
+            if(Objects.equals(caminoActual.obtenerUltimoVuelo().getAeropuertoDestino(), puntoOrigen)){
+                //Reemplaza mejor camino anterior por nuevo
                 tripulacion = new Tripulacion(caminoActual.copiar());
-                for (int k = 0;  k < tripulacion.cantidadElementos(); k++) {
+                for (int k = 1;  k < tripulacion.cantidadElementos(); k++) {
                     System.out.println("Actualizado de Resultado: " + tripulacion.getCamino().recuperarElemento(k).getNroVuelo());
                 }
             }
@@ -174,7 +178,7 @@ public class Main {
             if (!vuelosHechos.pertenece(vueloSiguiente)) {
                 System.out.println("Agregado: " + vueloSiguiente.getNroVuelo());
                 vuelosHechos.agregar(vueloSiguiente);
-                tripulacion = realizarVuelos(vuelosHechos, tripulacion, caminoActual, etapa + 1, vueloSiguiente, todosVuelos, vuelosSolucionPrevia);
+                tripulacion = realizarVuelos(vuelosHechos, tripulacion, caminoActual, etapa + 1, vueloSiguiente, todosVuelos, vuelosSolucionPrevia,puntoOrigen);
                 vuelosHechos.sacar(vueloSiguiente);
                 System.out.println("Eliminado: " + vueloSiguiente.getNroVuelo());
             }
