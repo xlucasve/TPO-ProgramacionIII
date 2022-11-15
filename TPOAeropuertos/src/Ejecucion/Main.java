@@ -76,16 +76,20 @@ public class Main {
         VectorTDA<Vuelo> camino = new Vector<>();
         camino.inicializarVector(12);
 
+        //Almacena que vuelos ya estan en otra solucion
+        ConjuntoTDA<Vuelo> vuelosPrevios = new Conjunto<>();
+        vuelosPrevios.inicializarConjunto();
 
         Tripulacion tripulacion = new Tripulacion(vectorVacio);
         Vuelo primero = new Vuelo("1", "AEROPARQUE", "AEROPARQUE", temp, temp);
-        tripulacion = realizarVuelos(conjuntoVacio, tripulacion, camino, 0, primero, conjuntoVuelos);
+        tripulacion = realizarVuelos(conjuntoVacio, tripulacion, camino, 0, primero, conjuntoVuelos, vuelosPrevios);
 
         for (int i = 0; i < tripulacion.cantidadElementos(); i++) {
             System.out.println(tripulacion.getCamino().recuperarElemento(i).getNroVuelo());
-            System.out.println(tripulacion.getCamino().recuperarElemento(i).getAeropuertoOrigen());
-
+            System.out.println(tripulacion.getCamino().recuperarElemento(i).getAeropuertoOrigen() + " " + tripulacion.getCamino().recuperarElemento(i).getAeropuertoDestino());
         }
+
+
     }
 
     public static ConjuntoTDA<Vuelo> leerDatosVuelos(String caminoDatos, String linea) throws IOException, ParseException {
@@ -148,14 +152,16 @@ public class Main {
         return vuelosAdyacentes;
     }
 
-    public static Tripulacion realizarVuelos(ConjuntoTDA<Vuelo> vuelosHechos, Tripulacion tripulacion, VectorTDA<Vuelo> caminoActual, int etapa, Vuelo vueloActual, ConjuntoTDA<Vuelo> todosVuelos){
+    public static Tripulacion realizarVuelos(ConjuntoTDA<Vuelo> vuelosHechos, Tripulacion tripulacion, VectorTDA<Vuelo> caminoActual, int etapa, Vuelo vueloActual, ConjuntoTDA<Vuelo> todosVuelos, ConjuntoTDA<Vuelo> vuelosSolucionPrevia){
         //Agregar el vuelo que acabo de agregar al camino actual
         caminoActual.agregarElemento(etapa, vueloActual);
         //V1.4 Centrarme en conseguir camino largo
-        if (caminoActual.cantidadElementos() > tripulacion.cantidadElementos()-1){
-            tripulacion.setCamino(caminoActual);
-            for (int k = 0;  k < tripulacion.cantidadElementos(); k++) {
-                System.out.println("Actualizado de Resultado: " + tripulacion.getCamino().recuperarElemento(k).getNroVuelo());
+        if (caminoActual.cantidadElementos() > tripulacion.cantidadElementos()){
+            if(Objects.equals(caminoActual.obtenerUltimoVuelo().getAeropuertoDestino(), "AEROPARQUE")){
+                tripulacion = new Tripulacion(caminoActual.copiar());
+                for (int k = 0;  k < tripulacion.cantidadElementos(); k++) {
+                    System.out.println("Actualizado de Resultado: " + tripulacion.getCamino().recuperarElemento(k).getNroVuelo());
+                }
             }
         }
 
@@ -168,7 +174,7 @@ public class Main {
             if (!vuelosHechos.pertenece(vueloSiguiente)) {
                 System.out.println("Agregado: " + vueloSiguiente.getNroVuelo());
                 vuelosHechos.agregar(vueloSiguiente);
-                tripulacion = realizarVuelos(vuelosHechos, tripulacion, caminoActual, etapa + 1, vueloSiguiente, todosVuelos);
+                tripulacion = realizarVuelos(vuelosHechos, tripulacion, caminoActual, etapa + 1, vueloSiguiente, todosVuelos, vuelosSolucionPrevia);
                 vuelosHechos.sacar(vueloSiguiente);
                 System.out.println("Eliminado: " + vueloSiguiente.getNroVuelo());
             }

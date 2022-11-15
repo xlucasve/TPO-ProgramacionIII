@@ -94,4 +94,17 @@ public class Vector<E> implements VectorTDA<E> {
         }
         return cont;
     }
+
+
+    public Vuelo obtenerUltimoVuelo() {
+        Vuelo ultimo = null;
+        try {
+            for (int i = 0; i < this.capacidadVector(); i++) {
+                ultimo = (Vuelo) this.recuperarElemento(i);
+
+            }
+        } catch (NullPointerException ignored) {
+        }
+        return ultimo;
+    }
 }

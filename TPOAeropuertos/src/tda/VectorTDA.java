@@ -1,5 +1,7 @@
 package tda;
 
+import Modelo.Vuelo;
+
 public interface VectorTDA<E> {
     void agregarElemento(int posicion, E elemento);
 
@@ -18,4 +20,6 @@ public interface VectorTDA<E> {
     boolean estaVacio();
 
     int cantidadElementos();
+
+    Vuelo obtenerUltimoVuelo();
 }
