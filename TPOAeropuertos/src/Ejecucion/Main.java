@@ -41,7 +41,7 @@ public class Main {
 
 
         //Por ahora el algoritmo funciona tomando el destino del vuelo que elegí
-        //En el algoritmo voy a mandar en el parametro el vuelo a realizar en los llamados recursivos, para asi agregarlo a la lista de vuelos realizados y tambien mandarlo a este algoritmo de adyacentes
+        //En el algoritmo voy a mandar en el parametro el vuelo a realizar en los llamados recursivos, para asi agregarlo a la lista de vuelos realizados y también mandarlo a este algoritmo de adyacentes
 
         //Prueba de si obtiene los adyacentes correctamente - FUNCIONA 14/11/22
         /*VectorTDA<Vuelo> vuelosAdyacentes = new Vector<>();
@@ -84,12 +84,14 @@ public class Main {
         //El primer "viaje" de la tripulacion es este con valor 1, para no considerarlo siempre que se trate
         //Sobre los vuelos de la tripulacion empezar del 1 en vez de 0
         //Era necesario por como hice el algoritmo de adyacentes - Lucas
-        Vuelo primero = new Vuelo("1", "AEROPARQUE", "AEROPARQUE", temp, temp);
+        Vuelo primero = new Vuelo("1", puntoOrigen, puntoOrigen, temp, temp);
         tripulacion = realizarVuelos(conjuntoVacio, tripulacion, camino, 0, primero, conjuntoVuelos, vuelosPrevios, puntoOrigen);
 
-        for (int i = 0; i < tripulacion.cantidadElementos(); i++) {
+        System.out.println();
+        for (int i = 1; i < tripulacion.cantidadElementos(); i++) {
             System.out.println(tripulacion.getCamino().recuperarElemento(i).getNroVuelo());
             System.out.println(tripulacion.getCamino().recuperarElemento(i).getAeropuertoOrigen() + " " + tripulacion.getCamino().recuperarElemento(i).getAeropuertoDestino());
+            System.out.println();
         }
 
 
@@ -102,7 +104,7 @@ public class Main {
         ConjuntoTDA<Vuelo> conjunto = new Conjunto<>();
         conjunto.inicializarConjunto();
 
-        //Para no considerar la primera linea que tiene los titulos nomas
+        //Para no considerar la primera línea que tiene los titulos nomas
         boolean primeraLinea = true;
         while ((linea = lector.readLine()) != null){
             if (primeraLinea){
@@ -145,7 +147,7 @@ public class Main {
         int j = 0;
         for (int i = 0; i < vectorVuelos.capacidadVector(); i++){
             Vuelo v = vectorVuelos.recuperarElemento(i);
-            //Si el origen del vuelo es el mismo que el a donde me llevo el vuelo en el que estoy
+            //Si el origen del vuelo es el mismo que él a donde me llevo el vuelo en el que estoy
             if (Objects.equals(vectorVuelos.recuperarElemento(i).getAeropuertoOrigen(), origen.getAeropuertoDestino())){
                 if(vectorVuelos.recuperarElemento(i).getFechaDespegue().compareTo(origen.getFechaAterrizaje()) > 0) {
                     //Si la hora del vuelo que estoy probando es después de haber llegado
