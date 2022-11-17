@@ -6,9 +6,11 @@ import tda.impl.Vector;
 public class Tripulacion {
 
     private VectorTDA<Vuelo> camino;
+    private long costoCamino;
 
-    public Tripulacion(VectorTDA<Vuelo> camino) {
+    public Tripulacion(VectorTDA<Vuelo> camino, long costoCamino) {
         this.camino = camino;
+        this.costoCamino = costoCamino;
     }
 
     public VectorTDA<Vuelo> getCamino() {
@@ -17,6 +19,14 @@ public class Tripulacion {
 
     public void setCamino(VectorTDA<Vuelo> camino) {
         this.camino = camino;
+    }
+
+    public long getCostoCamino() {
+        return costoCamino;
+    }
+
+    public void setCostoCamino(long costoCamino) {
+        this.costoCamino = costoCamino;
     }
 
     public int cantidadElementos(){
