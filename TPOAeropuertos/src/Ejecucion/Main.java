@@ -163,8 +163,9 @@ public class Main {
     public static long calcularCosto(Vuelo vuelo){
         long diferencia = vuelo.getFechaAterrizaje().getTime() - vuelo.getFechaDespegue().getTime();
         long diferenciaHoras = diferencia / (60 * 60 * 1000); //Pasamos de milisegundos a horas
-        System.out.println(diferenciaHoras);
+
         if (diferenciaHoras > 2) { //Es el máximo que puede esperar una tripulación
+            System.out.println(diferenciaHoras);
             return diferenciaHoras - 2; //El costo es constante así que devolvemos el nùmero de horas extras
         } else{
             return 0;
