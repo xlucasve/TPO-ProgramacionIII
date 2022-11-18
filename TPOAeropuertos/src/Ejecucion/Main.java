@@ -236,7 +236,8 @@ public class Main {
     }
 }
 
-    //TODO: Calcular costos por esperar más de 2 horas
-    //Analizar si BnB vale la pena el esfuerzo
+    //TODO:
+    //Analizar si BnB vale la pena el esfuerzo -- NO LO VALE
     //Hacer que viajen varias tripulaciones a la vez - IDEA: Hacer un for loop que pase por cada tripulacion
-    //Y de allí ver si la tripulacion puede hacer algún viaje o no según lo que se esta analizando
+    //Y de allí ver si la tripulacion puede hacer algún viaje o no según lo que se esta analizando -- IDEA NO ME PARECE CORRECTA - Lucas
+    //OTRA IDEA: Hacer un for loop adentro del algoritmo, antes de adyacentes, y que agarre los adyacentes de cada tripulacion
