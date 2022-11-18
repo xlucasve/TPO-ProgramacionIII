@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Date;
 import java.util.Objects;
 
@@ -63,7 +62,6 @@ public class Main {
 
         Date temp = new SimpleDateFormat("yyyy-MM-dd HH:mm")
                 .parse("0000-00-00 00:00");
-        System.out.println(temp);
 
         ConjuntoTDA<Vuelo> conjuntoVacio = new Conjunto<>();
         conjuntoVacio.inicializarConjunto();
@@ -77,22 +75,50 @@ public class Main {
         ConjuntoTDA<Vuelo> vuelosPrevios = new Conjunto<>();
         vuelosPrevios.inicializarConjunto();
 
-        Tripulacion tripulacion = new Tripulacion(vectorVacio, 999999999);
-
-        System.out.println("DIFERENCIA DE TIEMPO");
 
         //El primer "viaje" de la tripulacion es este con valor 1, para no considerarlo siempre que se trate
         //Sobre los vuelos de la tripulacion empezar del 1 en vez de 0
         //Era necesario por como hice el algoritmo de adyacentes - Lucas
         Vuelo primero = new Vuelo("1", puntoOrigen, puntoOrigen, temp, temp);
-        tripulacion = realizarVuelos(conjuntoVacio, tripulacion, camino, 0, primero, conjuntoVuelos, vuelosPrevios, puntoOrigen, 0);
 
-        System.out.println();
-        for (int i = 1; i < tripulacion.cantidadElementos(); i++) {
-            System.out.println(tripulacion.getCamino().recuperarElemento(i).getNroVuelo());
-            System.out.println(tripulacion.getCamino().recuperarElemento(i).getAeropuertoOrigen() + " " + tripulacion.getCamino().recuperarElemento(i).getAeropuertoDestino());
-            System.out.println();
+
+        VectorTDA<Tripulacion> tripulaciones = new Vector<>();
+        tripulaciones.inicializarVector(4);
+
+        for (int j = 0; j < 4; j++){
+            Tripulacion tripulacion = new Tripulacion(vectorVacio, Long.MAX_VALUE);
+            tripulaciones.agregarElemento(j, tripulacion);
         }
+
+        //Conjunto que contenga los vuelos hechos por otras tripulaciones
+        ConjuntoTDA<Vuelo> vuelosOtrasTripulaciones = new Conjunto<>();
+        vuelosOtrasTripulaciones.inicializarConjunto();
+
+        for (int k = 0; k < tripulaciones.capacidadVector(); k++) {
+            Tripulacion tripulacion = tripulaciones.recuperarElemento(k);
+            tripulacion = realizarVuelos(conjuntoVacio, tripulacion, camino, 0, primero, conjuntoVuelos, vuelosPrevios, puntoOrigen, 0, primero, vuelosOtrasTripulaciones);
+            tripulaciones.agregarElemento(k, tripulacion);
+            for (int elemento = 0; elemento < tripulacion.getCamino().cantidadElementos(); elemento++){
+                vuelosOtrasTripulaciones.agregar(tripulacion.getCamino().recuperarElemento(elemento));
+            }
+        }
+        System.out.println();
+
+        for (int k = 0; k < tripulaciones.capacidadVector(); k++) {
+            System.out.println("TRIPULACION NUMERO: " + k);
+            try {
+                for (int i = 1; i < tripulaciones.recuperarElemento(k).getCamino().cantidadElementos(); i++) {
+                    System.out.println(tripulaciones.recuperarElemento(k).getCamino().recuperarElemento(i).getNroVuelo());
+                    System.out.println(tripulaciones.recuperarElemento(k).getCamino().recuperarElemento(i).getAeropuertoOrigen() + " " + tripulaciones.recuperarElemento(i).getCamino().recuperarElemento(i).getAeropuertoDestino());
+
+                }
+                System.out.println("COSTO DEL CAMINO: " + tripulaciones.recuperarElemento(k).getCostoCamino());
+                System.out.println();
+            } catch (IndexOutOfBoundsException e){
+                System.out.println("TRIPULACION SIN VUELOS: " + k);
+            }
+        }
+
 
 
     }
@@ -137,7 +163,7 @@ public class Main {
         return conjunto;
     }
 
-    public static VectorTDA<Vuelo> obtenerAdyacentes(Vuelo origen, ConjuntoTDA<Vuelo> todosVuelos) {
+    public static VectorTDA<Vuelo> obtenerAdyacentes(Vuelo origen, ConjuntoTDA<Vuelo> todosVuelos, ConjuntoTDA<Vuelo> vuelosOtrasTripulaciones) {
         VectorTDA<Vuelo> vectorVuelos = new Vector<>();
         vectorVuelos.inicializarVector(todosVuelos.capacidad());
         VectorTDA<Vuelo> vuelosAdyacentes = new Vector<>();
@@ -153,53 +179,56 @@ public class Main {
                     //Si la hora del vuelo que estoy probando es después de haber llegado
                     //Compare to: Devuelve 1 si es mayor el horario. Si es 1 entonces ese vuelo seria "adyacente"
                     vuelosAdyacentes.agregarElemento(j, vectorVuelos.recuperarElemento(i));
-                    j++;
+                j++;
                 }
             }
         }
         return vuelosAdyacentes;
     }
 
-    public static long calcularCosto(Vuelo vuelo){
-        long diferencia = vuelo.getFechaAterrizaje().getTime() - vuelo.getFechaDespegue().getTime();
+    public static long calcularCosto(Vuelo vueloLlegada, Vuelo vueloSaliente){
+        long diferencia = vueloLlegada.getFechaAterrizaje().getTime() - vueloSaliente.getFechaDespegue().getTime();
         long diferenciaHoras = diferencia / (60 * 60 * 1000); //Pasamos de milisegundos a horas
-
+        diferenciaHoras = diferenciaHoras*-1;
         if (diferenciaHoras > 2) { //Es el máximo que puede esperar una tripulación
-            System.out.println(diferenciaHoras);
-            return diferenciaHoras - 2; //El costo es constante así que devolvemos el nùmero de horas extras
+            return (diferenciaHoras) - 2; //El costo es constante así que devolvemos el nùmero de horas extras
         } else{
             return 0;
         }
     }
 
     public static Tripulacion realizarVuelos(ConjuntoTDA<Vuelo> vuelosHechos, Tripulacion tripulacion, VectorTDA<Vuelo> caminoActual, int etapa, Vuelo vueloActual,
-                                             ConjuntoTDA<Vuelo> todosVuelos, ConjuntoTDA<Vuelo> vuelosSolucionPrevia, String puntoOrigen, long costoActual) {
+                                             ConjuntoTDA<Vuelo> todosVuelos, ConjuntoTDA<Vuelo> vuelosSolucionPrevia, String puntoOrigen, long costoActual, Vuelo vueloPrevio, ConjuntoTDA<Vuelo> vuelosOtrasTripulaciones) {
         //Agregar el vuelo que acabo de agregar al camino actual
         caminoActual.agregarElemento(etapa, vueloActual);
-        costoActual += calcularCosto(vueloActual);
+        if (etapa > 1) {
+            costoActual += calcularCosto(vueloPrevio, vueloActual);
         //Centrarme en conseguir camino más largo
-        if (caminoActual.cantidadElementos() >= tripulacion.cantidadElementos()) {
-                //Check de que haya vuelto al punto de origen
-            if (Objects.equals(caminoActual.obtenerUltimoVuelo().getAeropuertoDestino(), puntoOrigen)) {
-                //Reemplaza mejor camino anterior por nuevo
-                tripulacion = new Tripulacion(caminoActual.copiar(), 0);
-                for (int k = 1; k < tripulacion.cantidadElementos(); k++) {
-                    System.out.println("Actualizado de Resultado: " + tripulacion.getCamino().recuperarElemento(k).getNroVuelo());
+            if (caminoActual.cantidadElementos() >= tripulacion.cantidadElementos() && costoActual <= tripulacion.getCostoCamino()) {
+                    //Check de que haya vuelto al punto de origen
+                if (Objects.equals(caminoActual.obtenerUltimoVuelo().getAeropuertoDestino(), puntoOrigen)) {
+                    //Reemplaza mejor camino anterior por nuevo
+                    tripulacion = new Tripulacion(caminoActual.copiar(), costoActual);
+
+
                 }
+
             }
+
         }
+
 
         //Obtengo los viajes que posibles que puedo hacer de este punto
         VectorTDA<Vuelo> adyacentes = new Vector<>();
         adyacentes.inicializarVector(4);
-        adyacentes = obtenerAdyacentes(vueloActual, todosVuelos);
+        adyacentes = obtenerAdyacentes(vueloActual, todosVuelos, vuelosOtrasTripulaciones);
 
         //Recorro todos los viajes posibles para hacer todos los caminos
         for (int i = 0; i < adyacentes.cantidadElementos(); i++) {
             Vuelo vueloSiguiente = adyacentes.recuperarElemento(i);
             if (!vuelosHechos.pertenece(vueloSiguiente)) {
                 vuelosHechos.agregar(vueloSiguiente);
-                tripulacion = realizarVuelos(vuelosHechos, tripulacion, caminoActual, etapa + 1, vueloSiguiente, todosVuelos, vuelosSolucionPrevia, puntoOrigen, costoActual);
+                tripulacion = realizarVuelos(vuelosHechos, tripulacion, caminoActual, etapa + 1, vueloSiguiente, todosVuelos, vuelosSolucionPrevia, puntoOrigen, costoActual, vueloActual, vuelosOtrasTripulaciones);
                 vuelosHechos.sacar(vueloSiguiente);
             }
         }

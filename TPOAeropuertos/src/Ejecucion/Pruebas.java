@@ -21,8 +21,6 @@ public class Pruebas {
         VectorTDA<Vuelo> vuelosAdyacentes = new Vector<>();
         vuelosAdyacentes.inicializarVector(conjuntoVuelos.capacidad());
         Vuelo pruebaAdyacente = conjuntoVuelos.elegir();
-        System.out.println("ELEMENTO A PROBAR EN ADYACENTES = " + pruebaAdyacente.getNroVuelo() + " " + pruebaAdyacente.getAeropuertoDestino() + " " + pruebaAdyacente.getFechaAterrizaje());
-        vuelosAdyacentes = obtenerAdyacentes(pruebaAdyacente, conjuntoVuelos);
         System.out.println("Hay adyacentes? = " + !vuelosAdyacentes.estaVacio());
         System.out.println();
         if (!vuelosAdyacentes.estaVacio()){
