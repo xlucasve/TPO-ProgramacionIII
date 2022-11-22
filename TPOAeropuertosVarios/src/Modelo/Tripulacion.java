@@ -55,8 +55,19 @@ public class Tripulacion {
     public String obtenerUbicacion() {
         String ultimo = null;
         try {
-            for (int i = 0; i < this.getCaminoTemp().cantidadElementos(); i++) {
+            for (int i = 0; i < this.getCaminoTemp().capacidadVector(); i++) {
                 ultimo = this.getCaminoTemp().recuperarElemento(i).getAeropuertoDestino();
+            }
+        } catch (NullPointerException ignored) {
+        }
+        return ultimo;
+    }
+
+    public Vuelo obtenerUltimoVuelo() {
+        Vuelo ultimo = null;
+        try {
+            for (int i = 0; i < this.getCaminoTemp().capacidadVector(); i++) {
+                ultimo = this.getCaminoTemp().recuperarElemento(i);
             }
         } catch (NullPointerException ignored) {
         }

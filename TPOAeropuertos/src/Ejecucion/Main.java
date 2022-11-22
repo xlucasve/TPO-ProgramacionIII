@@ -85,7 +85,7 @@ public class Main {
         VectorTDA<Tripulacion> tripulaciones = new Vector<>();
         tripulaciones.inicializarVector(4);
 
-        for (int j = 0; j < 4; j++){
+        for (int j = 0; j < 4; j++) {
             Tripulacion tripulacion = new Tripulacion(vectorVacio, Long.MAX_VALUE);
             tripulaciones.agregarElemento(j, tripulacion);
         }
@@ -98,28 +98,23 @@ public class Main {
             Tripulacion tripulacion = tripulaciones.recuperarElemento(k);
             tripulacion = realizarVuelos(conjuntoVacio, tripulacion, camino, 0, primero, conjuntoVuelos, vuelosPrevios, puntoOrigen, 0, primero, vuelosOtrasTripulaciones);
             tripulaciones.agregarElemento(k, tripulacion);
-            for (int elemento = 0; elemento < tripulacion.getCamino().cantidadElementos(); elemento++){
+            for (int elemento = 0; elemento < tripulacion.getCamino().cantidadElementos(); elemento++) {
                 vuelosOtrasTripulaciones.agregar(tripulacion.getCamino().recuperarElemento(elemento));
             }
         }
         System.out.println();
 
-        for (int k = 0; k < tripulaciones.capacidadVector(); k++) {
-            System.out.println("TRIPULACION NUMERO: " + k);
-            try {
-                for (int i = 1; i < tripulaciones.recuperarElemento(k).getCamino().cantidadElementos(); i++) {
-                    System.out.println(tripulaciones.recuperarElemento(k).getCamino().recuperarElemento(i).getNroVuelo());
-                    System.out.println(tripulaciones.recuperarElemento(k).getCamino().recuperarElemento(i).getAeropuertoOrigen() + " " + tripulaciones.recuperarElemento(i).getCamino().recuperarElemento(i).getAeropuertoDestino());
+        try {
+            for (int i = 1; i < tripulaciones.recuperarElemento(0).getCamino().cantidadElementos(); i++) {
+                System.out.println(tripulaciones.recuperarElemento(0).getCamino().recuperarElemento(i).getNroVuelo());
+                System.out.println(tripulaciones.recuperarElemento(0).getCamino().recuperarElemento(i).getAeropuertoOrigen() + " " + tripulaciones.recuperarElemento(i).getCamino().recuperarElemento(i).getAeropuertoDestino());
 
-                }
-                System.out.println("COSTO DEL CAMINO: " + tripulaciones.recuperarElemento(k).getCostoCamino());
-                System.out.println();
-            } catch (IndexOutOfBoundsException e){
-                System.out.println("TRIPULACION SIN VUELOS: " + k);
             }
+            System.out.println("COSTO DEL CAMINO: " + tripulaciones.recuperarElemento(0).getCostoCamino());
+            System.out.println();
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("TRIPULACION SIN VUELOS: " + 0);
         }
-
-
 
     }
 
@@ -179,20 +174,20 @@ public class Main {
                     //Si la hora del vuelo que estoy probando es después de haber llegado
                     //Compare to: Devuelve 1 si es mayor el horario. Si es 1 entonces ese vuelo seria "adyacente"
                     vuelosAdyacentes.agregarElemento(j, vectorVuelos.recuperarElemento(i));
-                j++;
+                    j++;
                 }
             }
         }
         return vuelosAdyacentes;
     }
 
-    public static long calcularCosto(Vuelo vueloLlegada, Vuelo vueloSaliente){
+    public static long calcularCosto(Vuelo vueloLlegada, Vuelo vueloSaliente) {
         long diferencia = vueloLlegada.getFechaAterrizaje().getTime() - vueloSaliente.getFechaDespegue().getTime();
         long diferenciaHoras = diferencia / (60 * 60 * 1000); //Pasamos de milisegundos a horas
-        diferenciaHoras = diferenciaHoras*-1;
+        diferenciaHoras = diferenciaHoras * -1;
         if (diferenciaHoras > 2) { //Es el máximo que puede esperar una tripulación
             return (diferenciaHoras) - 2; //El costo es constante así que devolvemos el nùmero de horas extras
-        } else{
+        } else {
             return 0;
         }
     }
@@ -203,9 +198,9 @@ public class Main {
         caminoActual.agregarElemento(etapa, vueloActual);
         if (etapa > 1) {
             costoActual += calcularCosto(vueloPrevio, vueloActual);
-        //Centrarme en conseguir camino más largo
+            //Centrarme en conseguir camino más largo
             if (caminoActual.cantidadElementos() >= tripulacion.cantidadElementos() && costoActual <= tripulacion.getCostoCamino()) {
-                    //Check de que haya vuelto al punto de origen
+                //Check de que haya vuelto al punto de origen
                 if (Objects.equals(caminoActual.obtenerUltimoVuelo().getAeropuertoDestino(), puntoOrigen)) {
                     //Reemplaza mejor camino anterior por nuevo
                     tripulacion = new Tripulacion(caminoActual.copiar(), costoActual);
@@ -235,9 +230,3 @@ public class Main {
         return tripulacion;
     }
 }
-
-    //TODO:
-    //Analizar si BnB vale la pena el esfuerzo -- NO LO VALE
-    //Hacer que viajen varias tripulaciones a la vez - IDEA: Hacer un for loop que pase por cada tripulacion
-    //Y de allí ver si la tripulacion puede hacer algún viaje o no según lo que se esta analizando -- IDEA NO ME PARECE CORRECTA - Lucas
-    //OTRA IDEA: Hacer un for loop adentro del algoritmo, antes de adyacentes, y que agarre los adyacentes de cada tripulacion
