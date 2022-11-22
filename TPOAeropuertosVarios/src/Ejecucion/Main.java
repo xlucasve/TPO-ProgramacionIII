@@ -136,13 +136,14 @@ public class Main {
         return conjunto;
     }
 
-    public static boolean esAdyacente(Vuelo vueloAHacer, ConjuntoTDA<Vuelo> todosVuelos, ConjuntoTDA<Vuelo> vuelosOtrasTripulaciones, Vuelo ultimoVueloTripulacion) {
+    public static boolean esAdyacente(Vuelo vueloAHacer, ConjuntoTDA<Vuelo> vuelosOtrasTripulaciones, Vuelo ultimoVueloTripulacion) {
         if(vuelosOtrasTripulaciones.pertenece(vueloAHacer)){
             return false;
         }
         //Si el vuelo despega despues de que hayamos aterrizado
         if(vueloAHacer.getFechaDespegue().compareTo(ultimoVueloTripulacion.getFechaAterrizaje()) > 0){
             //El vuelo sale del mismo aeropuerto en el que me encuentro
+            System.out.println(Objects.equals(vueloAHacer.getAeropuertoOrigen(), ultimoVueloTripulacion.getAeropuertoDestino()));
             return Objects.equals(vueloAHacer.getAeropuertoOrigen(), ultimoVueloTripulacion.getAeropuertoDestino());
         }else{
             return false;
@@ -193,9 +194,10 @@ public class Main {
                 //ASIGNAR EL VUELO A UNA TRIPULACION
                 for (int siguienteTripulacion = 0; siguienteTripulacion < tripulaciones.capacidadVector(); siguienteTripulacion++) {
                     //SE AÑADE EL VUELO A LA TRIPULACION SI ES QUE ES ADYACENTE SINO NO SE TOMA Y ELIGE OTRA TRIPULACION
-                    if (esAdyacente(todosVuelosVector.recuperarElemento(v), todosVuelosConjunto, vuelosOtrasTripulaciones, tripulaciones.recuperarElemento(siguienteTripulacion).obtenerUltimoVuelo())){
+                    if (esAdyacente(todosVuelosVector.recuperarElemento(v), vuelosOtrasTripulaciones, tripulaciones.recuperarElemento(siguienteTripulacion).obtenerUltimoVuelo())){
                         if(etapa > 1) {
-                            costoAgregar = calcularCosto(tripulaciones.recuperarElemento(siguienteTripulacion).obtenerUltimoVuelo(), todosVuelosVector.recuperarElemento(siguienteVuelo));
+                            costoAgregar = calcularCosto(tripulaciones.recuperarElemento(siguienteTripulacion).obtenerUltimoVuelo(), todosVuelosVector.recuperarElemento(v));
+                            System.out.println("COSTO AGREGAR: " + costoAgregar);
                         }
                         vuelosOtrasTripulaciones.agregar(todosVuelosVector.recuperarElemento(v));
                         tripulaciones.recuperarElemento(siguienteTripulacion).getCaminoTemp().agregarElemento(etapa, todosVuelosVector.recuperarElemento(v));
@@ -209,4 +211,6 @@ public class Main {
         }
         return tripulaciones;
     }
+
+    //PROBLEMA: SE APLICAN LOS MISMOS VUELOS A TODAS LAS TRIPULACIONES
 }
