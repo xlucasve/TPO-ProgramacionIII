@@ -143,7 +143,7 @@ public class Main {
         //Si el vuelo despega despues de que hayamos aterrizado
         if(vueloAHacer.getFechaDespegue().compareTo(ultimoVueloTripulacion.getFechaAterrizaje()) > 0){
             //El vuelo sale del mismo aeropuerto en el que me encuentro
-            return Objects.equals(vueloAHacer.getAeropuertoOrigen(), ultimoVueloTripulacion.getAeropuertoOrigen());
+            return Objects.equals(vueloAHacer.getAeropuertoOrigen(), ultimoVueloTripulacion.getAeropuertoDestino());
         }else{
             return false;
         }
@@ -188,18 +188,24 @@ public class Main {
                 }
             }
         } else {
-            for(int v = siguienteVuelo; v < todosVuelosVector.cantidadElementos(); v++) {
+            //RECORRER TODOS LOS VUELOS
+            for(int v = 0; v < todosVuelosVector.cantidadElementos(); v++) {
+                //ASIGNAR EL VUELO A UNA TRIPULACION
                 for (int siguienteTripulacion = 0; siguienteTripulacion < tripulaciones.capacidadVector(); siguienteTripulacion++) {
+                    //SE AÑADE EL VUELO A LA TRIPULACION SI ES QUE ES ADYACENTE SINO NO SE TOMA Y ELIGE OTRA TRIPULACION
                     if (esAdyacente(todosVuelosVector.recuperarElemento(v), todosVuelosConjunto, vuelosOtrasTripulaciones, tripulaciones.recuperarElemento(siguienteTripulacion).obtenerUltimoVuelo())){
-                        System.out.println(todosVuelosVector.recuperarElemento(v).getNroVuelo() + " " + siguienteTripulacion);
-                        costoAgregar = calcularCosto( tripulaciones.recuperarElemento(siguienteTripulacion).obtenerUltimoVuelo(), todosVuelosVector.recuperarElemento(siguienteVuelo));
-                        System.out.println("CostoAgregar :" +costoAgregar);
-
+                        if(etapa > 1) {
+                            costoAgregar = calcularCosto(tripulaciones.recuperarElemento(siguienteTripulacion).obtenerUltimoVuelo(), todosVuelosVector.recuperarElemento(siguienteVuelo));
+                        }
+                        vuelosOtrasTripulaciones.agregar(todosVuelosVector.recuperarElemento(v));
+                        tripulaciones.recuperarElemento(siguienteTripulacion).getCaminoTemp().agregarElemento(etapa, todosVuelosVector.recuperarElemento(v));
+                        System.out.println("ETAPA: " + etapa);
+                        tripulaciones = realizarVuelos(etapa+1, todosVuelosConjunto,todosVuelosVector, costoActual,vuelosOtrasTripulaciones, tripulaciones, costoAgregar, mejorCosto, 0);
+                        vuelosOtrasTripulaciones.sacar(todosVuelosVector.recuperarElemento(v));
+                        tripulaciones.recuperarElemento(siguienteTripulacion).getCaminoTemp().eliminarElemento(etapa);
                     }
                 }
             }
-
-
         }
         return tripulaciones;
     }
