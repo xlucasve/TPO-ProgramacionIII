@@ -22,4 +22,6 @@ public interface VectorTDA<E> {
     int cantidadElementos();
 
     Vuelo obtenerUltimoVuelo();
+
+    int getSiguiente();
 }

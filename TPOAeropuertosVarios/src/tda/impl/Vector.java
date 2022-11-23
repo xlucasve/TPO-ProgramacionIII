@@ -9,13 +9,16 @@ import java.util.Objects;
 
 public class Vector<E> implements VectorTDA<E> {
     private List<E> vector;
+    private int siguiente;
 
     @Override
     public void agregarElemento(int posicion, E elemento) {
         if (this.vector.size() > posicion && this.vector.get(posicion) != null) {
             this.vector.set(posicion, elemento);
+            this.siguiente++;
         } else {
             this.vector.add(posicion, elemento);
+            this.siguiente++;
         }
     }
 
@@ -27,11 +30,14 @@ public class Vector<E> implements VectorTDA<E> {
     @Override
     public void eliminarElemento(int posicion) {
         this.vector.remove(posicion);
+        this.siguiente--;
     }
 
     @Override
     public void inicializarVector(int n) {
+
         this.vector = new ArrayList<>(n);
+        this.siguiente = 0;
     }
 
     @Override
@@ -76,11 +82,13 @@ public class Vector<E> implements VectorTDA<E> {
 
     public boolean estaVacio() {
         try {
-            this.recuperarElemento(0);
-            return false;
-        } catch (IndexOutOfBoundsException e) {
-            return true;
+            for (int i = 0; i < this.capacidadVector(); i++) {
+                this.recuperarElemento(i);
+                return false;
+            }
+        } catch (IndexOutOfBoundsException ignored) {
         }
+        return true;
     }
     public int cantidadElementos(){
         int cont = 0;
@@ -105,5 +113,13 @@ public class Vector<E> implements VectorTDA<E> {
         } catch (NullPointerException ignored) {
         }
         return ultimo;
+    }
+
+    public int getSiguiente() {
+        return siguiente;
+    }
+
+    public void setSiguiente(int siguiente) {
+        this.siguiente = siguiente;
     }
 }

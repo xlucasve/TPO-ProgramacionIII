@@ -66,7 +66,7 @@ public class Tripulacion {
     public Vuelo obtenerUltimoVuelo() {
         Vuelo ultimo = null;
         try {
-            for (int i = 0; i < this.getCaminoTemp().capacidadVector(); i++) {
+            for (int i = 0; i < this.caminoTemp.capacidadVector(); i++) {
                 ultimo = this.getCaminoTemp().recuperarElemento(i);
             }
         } catch (NullPointerException ignored) {
