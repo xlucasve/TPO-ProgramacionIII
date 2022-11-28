@@ -49,10 +49,9 @@ public class Main {
         System.out.println("Buscando mejor camino...");
         tripulaciones = realizarVuelos(todosVuelosConjunto, todosVuelosVector, 0, vuelosOtrasTripulaciones, tripulaciones, 0, Integer.MAX_VALUE);
         int t = 0;
-
+        System.out.println();
         while (t < tripulaciones.capacidadVector()) {
             try {
-                System.out.println();
                 System.out.println("VUELOS TRIPULACION " + t);
                 for (int vuelo = 1; vuelo < tripulaciones.recuperarElemento(t).getCamino().cantidadElementos(); vuelo++) {
                     System.out.println(tripulaciones.recuperarElemento(t).getCamino().recuperarElemento(vuelo).getNroVuelo());
@@ -183,13 +182,11 @@ public class Main {
                 }
                 //Regresaron - Guardar los datos de cada tripulacion
                 if (estanDevuelta) {
-                    System.out.println();
                     mejorCosto = costoActual;
                     tripulaciones.recuperarElemento(0).setCostoCamino(mejorCosto);
                     for (int t = 0; t < tripulaciones.capacidadVector(); t++) {
                         tripulaciones.recuperarElemento(t).setCamino(tripulaciones.recuperarElemento(t).getCaminoTemp().copiar());
                     }
-                    System.out.println();
 
                 }
             }
