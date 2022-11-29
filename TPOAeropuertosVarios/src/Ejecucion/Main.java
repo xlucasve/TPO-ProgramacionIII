@@ -45,9 +45,10 @@ public class Main {
         //Conjunto que contenga los vuelos hechos por otras tripulaciones
         ConjuntoTDA<Vuelo> vuelosOtrasTripulaciones = new Conjunto<>();
         vuelosOtrasTripulaciones.inicializarConjunto();
+        tripulaciones.recuperarElemento(0).setCostoCamino(Integer.MAX_VALUE);
 
         System.out.println("Buscando mejor camino...");
-        tripulaciones = realizarVuelos(todosVuelosConjunto, todosVuelosVector, 0, vuelosOtrasTripulaciones, tripulaciones, 0, Integer.MAX_VALUE);
+        tripulaciones = realizarVuelos(todosVuelosConjunto, todosVuelosVector, 0, vuelosOtrasTripulaciones, tripulaciones, 0, tripulaciones.recuperarElemento(0).getCostoCamino());
         int t = 0;
         System.out.println();
         while (t < tripulaciones.capacidadVector()) {
@@ -62,7 +63,7 @@ public class Main {
             }
         }
 
-        System.out.println("COSTO DEL CAMINO: " + tripulaciones.recuperarElemento(0).getCostoCamino());
+        System.out.println("COSTO DEL CAMINO: " + tripulaciones.recuperarElemento(0).getCostoCamino()*60);
 
     }
 
@@ -148,7 +149,13 @@ public class Main {
         //Fecha menor = -1; Fechas iguales = 0; Fecha mayor = 1
         if(vueloAHacer.getFechaDespegue().compareTo(ultimoVueloTripulacion.getFechaAterrizaje()) > 0){
             //Chek si el vuelo sale del mismo aeropuerto en el que me encuentro
-            return Objects.equals(vueloAHacer.getAeropuertoOrigen(), ultimoVueloTripulacion.getAeropuertoDestino());
+            if(calcularCosto(ultimoVueloTripulacion, vueloAHacer)+2 >= 2) {
+                return Objects.equals(vueloAHacer.getAeropuertoOrigen(), ultimoVueloTripulacion.getAeropuertoDestino());
+            }
+            else{
+                return false;
+            }
+
         }else{
             return false;
         }
@@ -158,12 +165,8 @@ public class Main {
         long diferencia = vueloLlegada.getFechaAterrizaje().getTime() - vueloSaliente.getFechaDespegue().getTime();
         long diferenciaHoras = diferencia / (60 * 60 * 1000); //Pasamos de milisegundos a horas
         diferenciaHoras = diferenciaHoras * -1;
-        if (diferenciaHoras > 2) { //Check si supera el tiempo de espera permitido sin multa
-            return (diferenciaHoras) - 2; //El costo es constante así que devolvemos el nùmero que represente las horas extras
-        } else {
-            return 0;
+        return (diferenciaHoras) - 2; //El costo es constante así que devolvemos el nùmero que represente las horas extras
         }
-    }
 
     public static VectorTDA<Tripulacion> realizarVuelos(ConjuntoTDA<Vuelo> todosVuelosConjunto, VectorTDA<Vuelo> todosVuelosVector, long costoActual, ConjuntoTDA<Vuelo> vuelosOtrasTripulaciones,
                                                         VectorTDA<Tripulacion> tripulaciones, long costoAgregar, long mejorCosto) {
@@ -182,8 +185,7 @@ public class Main {
                 }
                 //Regresaron - Guardar los datos de cada tripulacion
                 if (estanDevuelta) {
-                    mejorCosto = costoActual;
-                    tripulaciones.recuperarElemento(0).setCostoCamino(mejorCosto);
+                    tripulaciones.recuperarElemento(0).setCostoCamino(costoActual);
                     for (int t = 0; t < tripulaciones.capacidadVector(); t++) {
                         tripulaciones.recuperarElemento(t).setCamino(tripulaciones.recuperarElemento(t).getCaminoTemp().copiar());
                     }
@@ -203,7 +205,7 @@ public class Main {
                         }
                         vuelosOtrasTripulaciones.agregar(todosVuelosVector.recuperarElemento(v));
                         tripulaciones.recuperarElemento(siguienteTripulacion).getCaminoTemp().agregarElemento(tripulaciones.recuperarElemento(siguienteTripulacion).getCaminoTemp().getSiguiente(), todosVuelosVector.recuperarElemento(v));
-                        tripulaciones = realizarVuelos( todosVuelosConjunto,todosVuelosVector, costoActual,vuelosOtrasTripulaciones, tripulaciones, costoAgregar, mejorCosto);
+                        tripulaciones = realizarVuelos( todosVuelosConjunto,todosVuelosVector, costoActual,vuelosOtrasTripulaciones, tripulaciones, costoAgregar, tripulaciones.recuperarElemento(0).getCostoCamino());
                         vuelosOtrasTripulaciones.sacar(todosVuelosVector.recuperarElemento(v));
                         tripulaciones.recuperarElemento(siguienteTripulacion).getCaminoTemp().eliminarElemento(tripulaciones.recuperarElemento(siguienteTripulacion).getCaminoTemp().getSiguiente()-1);
                     }
